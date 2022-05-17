@@ -35,11 +35,14 @@
 </script>
 
 <script lang="ts" setup>
-  import { Prop, computed } from 'vue'
-  import { vLazyImgOptions, vLazyImg } from '../directives/v-lazy-img'
+  import { computed, type Prop } from 'vue'
+  import {
+    type vLazyImgOptions,
+    vLazyImg,
+  } from '@package/directives/v-lazy-img'
 
   import MazSpinner from './MazSpinner.vue'
-  import { Image } from './types'
+  import type { Image } from './types'
 
   const props = defineProps({
     image: { type: [String, Object], default: undefined } as Prop<Image>,
@@ -55,11 +58,11 @@
 
   defineEmits(['intersecting', 'loading', 'loaded', 'error'])
 
-  const sources = computed(() =>
-    typeof props.image === 'string'
+  const sources = computed(() => {
+    return typeof props.image === 'string'
       ? [{ srcset: props.image }]
-      : props.image?.sources,
-  )
+      : props.image?.sources
+  })
 </script>
 
 <style lang="postcss" scoped>

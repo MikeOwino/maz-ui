@@ -15,15 +15,16 @@
       readonly
       :size="size"
       :disabled="disabled"
-      @focus="openList"
-      @click="openList"
+      @focus.stop="openList"
+      @click.stop="openList"
       @keydown="keyboardHandler($event)"
     >
       <template #right-icon>
         <button
           tabindex="-1"
-          class="maz-custom maz-flex maz-h-full maz-bg-transparent maz-flex-center"
-          @click="openList"
+          type="button"
+          class="m-select-input__toggle-button maz-custom maz-flex maz-h-full maz-bg-transparent maz-flex-center"
+          @click.stop="openList"
         >
           <MazIcon
             :src="ChevronDownIcon"
@@ -80,10 +81,10 @@
 
 <script lang="ts" setup>
   // NEXT: listPosition & multiselect & search in list
-  import { ref, PropType, computed, onBeforeMount, nextTick } from 'vue'
+  import { ref, computed, onBeforeMount, nextTick, type PropType } from 'vue'
   import MazInput from './MazInput.vue'
   import MazIcon from './MazIcon.vue'
-  import { Color, ModelValueSimple, Position, Size } from './types'
+  import type { Color, ModelValueSimple, Position, Size } from './types'
   import ChevronDownIcon from '@package/icons/chevron-down.svg'
 
   const props = defineProps({
@@ -191,7 +192,7 @@
     if (props.disabled) return
     hasListOpen.value = true
     scrollToSelected()
-    emits('open', event)
+    emits('open', hasListOpen.value)
   }
 
   const keyboardHandler = (event: KeyboardEvent) => {
@@ -294,8 +295,22 @@
     &:not(.--disabled) {
       @apply maz-cursor-pointer;
 
-      &:deep(input) {
+      &:deep(.m-input-input) {
         @apply maz-cursor-pointer;
+      }
+    }
+
+    &-input:deep(.m-input-input) {
+      @apply maz-pr-0;
+    }
+
+    &-input.--has-label:deep(.m-input-input) {
+      @apply maz-pr-0;
+    }
+
+    &-input {
+      &__toggle-button {
+        @apply maz-pl-0;
       }
     }
 
@@ -310,12 +325,14 @@
     }
 
     &-list {
-      @apply maz-absolute maz-z-100 maz-overflow-auto maz-rounded-lg maz-bg-color maz-text-normal maz-elevation;
+      @apply maz-absolute maz-z-100 maz-overflow-auto
+        maz-rounded-lg maz-bg-color maz-text-normal maz-elevation;
 
       min-width: 3.5rem;
 
       &-item {
-        @apply maz-flex maz-w-full maz-items-center maz-bg-transparent maz-px-4 maz-text-left maz-text-normal hover:maz-bg-color-light;
+        @apply maz-flex maz-w-full maz-items-center maz-bg-transparent
+          maz-px-4 maz-text-left maz-text-normal hover:maz-bg-color-light;
 
         &.--is-keyboard-selected {
           @apply maz-bg-color-light maz-font-medium;
